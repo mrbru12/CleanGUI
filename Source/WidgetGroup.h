@@ -1,0 +1,6 @@
+#ifndef CLEAN_WIDGETGROUP_H
+#define CLEAN_WIDGETGROUP_H
+
+
+
+#endif

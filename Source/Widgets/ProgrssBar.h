@@ -1,0 +1,6 @@
+#ifndef CLEAN_PROGRESSBAR_H
+#define CLEAN_PROGRESSBAR_H
+
+
+
+#endif
