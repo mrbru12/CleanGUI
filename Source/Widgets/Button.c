@@ -27,6 +27,10 @@ struct clean_button
     clean_label* title;
     float margin_size;
     unsigned int vao;
+    // unsigned int shader_program;
+
+    // on_click_callback;
+    // on_hover_callback;
     
     unsigned int body_vbo;
     unsigned int body_ebo;
@@ -82,16 +86,16 @@ clean_button* clean_button_create(const char* title)
 
         // === [ELEMENT BUFFER] ===
 
-        unsigned int indices[] = {
+        unsigned int indices_buffer[] = {
             0, 1, 2,
             2, 3, 0
         };
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, button->body_ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_buffer), indices_buffer, GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, button->border_ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_buffer), indices_buffer, GL_STATIC_DRAW);
 
         // === [UNBIND BUFFERS] ===
 
@@ -107,30 +111,101 @@ clean_button* clean_button_create(const char* title)
 
 void clean_button_destroy(clean_button* button)
 {
+    clean_label_destroy(button->title);
 
+    glDeleteVertexArrays(1, button->vao);
+
+    glDeleteBuffers(1, button->body_vbo);
+    glDeleteBuffers(1, button->body_ebo);
+
+    glDeleteBuffers(1, button->border_vbo);
+    glDeleteBuffers(1, button->border_ebo);
+
+    free(button);
 }
 
 void clean_button_display(clean_button* button, float x, float y)
-{
-    // bind(button->vao)
-    // 
-    // bind(button->border_vbo)
-    // bufferdata(button_border_vbo, x + border, y + border, border_color)
-    // bind(button->border_ebo)
-    // gldrawElements(button->border)
-    //
-    // bind(button->body_vbo)
-    // if button_on_collide
-    //     if button_click
-    //         bufferdata(button->body_vbo, x, y, click_color)
-    //         on_click_callback()
-    //     else
-    //         bufferdata(button->body_vbo, x, y, highlit_color)
-    //         on_hover_callback()
-    // else
-    //     bufferdata(button->body_vbo, x, y, idle_color)
-    // bind(button->body_ebo)
-    // gldrawElements(button->body)
-    //
-    // clean_label_display(buton->title, x + margin + border, y + margin + border)
+{    
+    glBindVertexArray(button->vao);
+
+    // glBindShader(button->shader)
+
+    // === [RENDER BORDER] ===
+
+    // TODO: Usar as structs clean_point e clean_rect pra deixar esses buffers mais simples
+    float border_buffer[] = {
+        x, y, 
+        button->border_color.r, button->border_color.g, button->border_color.b, button->border_color.a,
+
+        x + clean_label_get_width(button->title) + button->margin_size * 2.0f + button->border_size * 2.0f, y, 
+        button->border_color.r, button->border_color.g, button->border_color.b, button->border_color.a,
+
+        x + clean_label_get_width(button->title) + button->margin_size * 2.0f + button->border_size * 2.0f, y + clean_label_get_height(button->title) + button->margin_size * 2.0f + button->border_size * 2.0f,
+        button->border_color.r, button->border_color.g, button->border_color.b, button->border_color.a,
+
+        x, y + clean_label_get_height(button->title) + button->margin_size * 2.0f + button->border_size * 2.0f, 
+        button->border_color.r, button->border_color.g, button->border_color.b, button->border_color.a
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, button->border_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(border_buffer), border_buffer, GL_DYNAMIC_DRAW);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, button->border_ebo);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+
+    // === [CALL EVENTS AND RENDER BODY] ===
+
+    clean_color body_state_color;
+
+    clean_point muouse_point; // = windows_get_mouse_pos();
+
+    clean_rect body_rect;
+    body_rect.x = x + button->margin_size;
+    body_rect.y = y + button->margin_size;
+    body_rect.w = clean_label_get_width(button->title) + button->margin_size * 2;
+    body_rect.h = clean_label_get_height(button->title) + button->margin_size * 2;
+
+    if (clean_point_on_rect(muouse_point, body_rect))
+    {
+        if (0) // mouse_clicked
+        {
+            body_state_color = button->body_active_color;
+
+            // on_click_callback();
+        }
+        else
+        {
+            body_state_color = button->body_highlight_color;
+
+            // on_hover_callback();
+        }
+    }
+    else
+        body_state_color = button->body_inactive_color;
+
+    float body_buffer[] = {
+        x + button->border_size, y + button->border_size, 
+        body_state_color.r, body_state_color.g, body_state_color.b, body_state_color.a,
+
+        x + clean_label_get_width(button->title) + button->margin_size * 2.0f + button->border_size, y + button->border_size, 
+        body_state_color.r, body_state_color.g, body_state_color.b, body_state_color.a,
+
+        x + clean_label_get_width(button->title) + button->margin_size * 2.0f + button->border_size, y + clean_label_get_height(button->title) + button->margin_size * 2.0f + button->border_size, 
+        body_state_color.r, body_state_color.g, body_state_color.b, body_state_color.a,
+
+        x + button->border_size, y + clean_label_get_height(button->title) + button->margin_size * 2.0f + button->border_size,
+        body_state_color.r, body_state_color.g, body_state_color.b, body_state_color.a
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, button->body_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(body_buffer), body_buffer, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, button->body_ebo);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+
+    // === [RENDER TITLE] ===
+
+    clean_label_display(button->title, x + button->margin_size + button->border_size, y + button->margin_size + button->border_size);
 }
