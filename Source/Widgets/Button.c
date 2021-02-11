@@ -5,7 +5,7 @@
 #include "../Collision.h"
 #include "Label.h"
 
-#include <Vendor/Glad/include/glad/glad.h>
+#include <glad/glad.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -113,13 +113,13 @@ void clean_button_destroy(clean_button* button)
 {
     clean_label_destroy(button->title);
 
-    glDeleteVertexArrays(1, button->vao);
+    glDeleteVertexArrays(1, &button->vao);
 
-    glDeleteBuffers(1, button->body_vbo);
-    glDeleteBuffers(1, button->body_ebo);
+    glDeleteBuffers(1, &button->body_vbo);
+    glDeleteBuffers(1, &button->body_ebo);
 
-    glDeleteBuffers(1, button->border_vbo);
-    glDeleteBuffers(1, button->border_ebo);
+    glDeleteBuffers(1, &button->border_vbo);
+    glDeleteBuffers(1, &button->border_ebo);
 
     free(button);
 }
@@ -128,7 +128,7 @@ void clean_button_display(clean_button* button, float x, float y)
 {    
     glBindVertexArray(button->vao);
 
-    // glBindShader(button->shader)
+    // TODO: glUseProgram(button->shader)
 
     // === [RENDER BORDER] ===
 
@@ -158,17 +158,15 @@ void clean_button_display(clean_button* button, float x, float y)
 
     clean_color body_state_color;
 
-    clean_point muouse_point; // = windows_get_mouse_pos();
-
     clean_rect body_rect;
     body_rect.x = x + button->margin_size;
     body_rect.y = y + button->margin_size;
     body_rect.w = clean_label_get_width(button->title) + button->margin_size * 2;
     body_rect.h = clean_label_get_height(button->title) + button->margin_size * 2;
 
-    if (clean_point_on_rect(muouse_point, body_rect))
+    if (clean_cursor_on_rect(body_rect))
     {
-        if (0) // mouse_clicked
+        if (clean_cursor_click())
         {
             body_state_color = button->body_active_color;
 

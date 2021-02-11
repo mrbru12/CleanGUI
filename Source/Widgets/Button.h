@@ -16,6 +16,9 @@ void clean_button_display(clean_button* button, float x, float y);
 
 // void clean_button_set_callback(clean_button* button, clean_event event, [lambda]);
 
+// void clean_button_set_vertex_shader(clean_button* button, const char* source);
+// void clean_button_set_fragment_shader(clean_button* button, const char* source);
+// void clean_button_set_shader_program(clean_button* button, unsigned int id);
 // void clean_button_set_...(clean_button* button, ...);
 // void clean_button_set_...(clean_button* button, ...);
 // void clean_button_set_...(clean_button* button, ...);
