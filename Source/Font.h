@@ -3,7 +3,7 @@
 
 typedef struct clean_font clean_font;
 
-clean_font* clean_font_create(const char* path, float size);
+clean_font* clean_font_create(/* clean_controller* controller, */ const char* path, float size);
 void clean_font_destroy(clean_font* font);
 
 #endif

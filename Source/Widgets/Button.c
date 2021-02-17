@@ -24,6 +24,8 @@
 
 struct clean_button
 {
+    clean_controller* controller;
+
     clean_label* title;
     float margin_size;
     unsigned int vao;
@@ -44,15 +46,17 @@ struct clean_button
     clean_color border_color;
 };
 
-clean_button* clean_button_create(const char* title)
+clean_button* clean_button_create(clean_controller* controller, const char* title)
 {
     clean_button* button = malloc(sizeof(clean_button));
 
     if (button)
     {
+        button->controller = controller;
+
         // === [STYLE] ===
 
-        button->title = clean_label_create(title);
+        button->title = clean_label_create(/* button->controller, */ title);
         button->margin_size = CLEAN_DEFAULT_BUTTON_MARGIN_SIZE;
         
         button->body_active_color = CLEAN_DEFAULT_BUTTON_BODY_ACTIVE_COLOR;
@@ -105,8 +109,8 @@ clean_button* clean_button_create(const char* title)
 
         return button;
     }
-    else
-        CLEAN_ERROR_VALUE("Button", "Failed to allocate memory for clean_button!", NULL);
+    
+    CLEAN_ERROR_VALUE("Button", "Failed to allocate memory for clean_button!", NULL);
 }
 
 void clean_button_destroy(clean_button* button)
@@ -164,9 +168,9 @@ void clean_button_display(clean_button* button, float x, float y)
     body_rect.w = clean_label_get_width(button->title) + button->margin_size * 2;
     body_rect.h = clean_label_get_height(button->title) + button->margin_size * 2;
 
-    if (clean_cursor_on_rect(body_rect))
+    if (clean_controller_window_has_focus(button->controller) && clean_controller_cursor_on_rect(button->controller, body_rect))
     {
-        if (clean_cursor_click())
+        if (clean_controller_cursor_click(button->controller))
         {
             body_state_color = button->body_active_color;
 

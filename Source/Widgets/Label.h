@@ -6,7 +6,7 @@
 typedef struct clean_label clean_label;
 
 // TODO: Usar a fonte padrão se o parâmetro for NULL
-clean_label* clean_label_create(const char* text);
+clean_label* clean_label_create(/* clean_controller* controller, */ const char* text);
 void clean_label_destroy(clean_label* label);
 
 void clean_label_display(clean_label* label, float x, float y);

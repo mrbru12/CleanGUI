@@ -8,6 +8,8 @@
    algumas melhorias de performance por de trás dos panos. Além de que isso também vai facilitar para o usuário, pois ele não vai precisar renderizar todos os Widgets manualmente no loop 
    de renderização, precisando só renderizar a variável do grupo oque renderizara todos os Widgets "bindados" a ele de uma só vez. 
  * A fonte padrão vai ser a Consolas
+ * Eu preciso de uma opção de cor de highlight (talvez dar um jeito de fazer os highlights serem só uma sobreposição da cor do highlight, com uma opacidade baixa, na cor atual) para os Widgets 
+   que fiquem ativados, como a Check Box
  * Provavelmente todos os Widgets que tiverem texto sendo renderizado de alguma forma em alguma parte dele vai ser, para facilitar, por meio de uma Label sendo setada renderizada por trás dos panos
  * O tamanho e a escala dos Widgets vai ser proporcional e depender diretamente do tamanho da fonte, além disso também vai ser adicionado o valor de margem entre a fonte e as bordas do widget. 
    Talvez seja interessante ter algum método opcional para inserir manualmente o tamanho dos Widgets, fazendo o tamanho deles não depender mais do tamanho da fonte
