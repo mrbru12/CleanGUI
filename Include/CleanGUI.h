@@ -9,7 +9,7 @@
    de renderização, precisando só renderizar a variável do grupo oque renderizara todos os Widgets "bindados" a ele de uma só vez. 
  * A fonte padrão vai ser a Consolas
  * Eu preciso de uma opção de cor de highlight (talvez dar um jeito de fazer os highlights serem só uma sobreposição da cor do highlight, com uma opacidade baixa, na cor atual) para os Widgets 
-   que fiquem ativados, como a Check Box
+   que fiquem ativados, como a Check Box. Isso quer dizer que na Check Box, por exemplo, o highlight vai ser feito por meio de um uniform
  * Provavelmente todos os Widgets que tiverem texto sendo renderizado de alguma forma em alguma parte dele vai ser, para facilitar, por meio de uma Label sendo setada renderizada por trás dos panos
  * O tamanho e a escala dos Widgets vai ser proporcional e depender diretamente do tamanho da fonte, além disso também vai ser adicionado o valor de margem entre a fonte e as bordas do widget. 
    Talvez seja interessante ter algum método opcional para inserir manualmente o tamanho dos Widgets, fazendo o tamanho deles não depender mais do tamanho da fonte
@@ -37,6 +37,7 @@
 #include "../Source/Widgets/TextBox.h"
 
 #include "../Source/Color.h"
+#include "../Source/Controller.h"
 #include "../Source/Event.h"
 #include "../Source/Font.h"
 #include "../Source/WidgetGroup.h"

@@ -3,6 +3,7 @@
 #include "../Debug.h"
 #include "../Color.h"
 #include "../Collision.h"
+#include "../Shader.h"
 #include "Label.h"
 
 #include <glad/glad.h>
@@ -29,7 +30,7 @@ struct clean_button
     clean_label* title;
     float margin_size;
     unsigned int vao;
-    // unsigned int shader_program;
+    unsigned int shader_program;
 
     // on_click_callback;
     // on_hover_callback;
@@ -65,6 +66,27 @@ clean_button* clean_button_create(clean_controller* controller, const char* titl
 
         button->border_size = CLEAN_DEFAULT_BUTTON_BORDER_SIZE;
         button->border_color = CLEAN_DEFAULT_BUTTON_BORDER_COLOR;
+
+        // === [SHADER BUILD] ===
+
+        const char* vertex_shader_source = "#version 330 core\n"
+                                           "layout (location = 0) in vec2 attribute_position;\n"
+                                           "layout (location = 1) in vec4 attribute_color;\n"
+                                           "out vec4 vertex_color;\n"
+                                           "void main()\n"
+                                           "{\n"
+                                           "    gl_Position = vec4(attribute_position, 1.0, 1.0);\n"
+                                           "}\0";
+
+        const char* fragment_shader_source = "#version 330 core\n"
+                                             "in vec4 vertex_color;\n"
+                                             "out vec4 fragment_color;\n"
+                                             "void main()\n"
+                                             "{\n"
+                                             "    fragment_color = vertex_color;\n"
+                                             "}\0";
+
+        button->shader_program = clean_shader_gen_program(vertex_shader_source, fragment_shader_source);
 
         // === [BUFFER GENERATION] ===
 
@@ -117,6 +139,8 @@ void clean_button_destroy(clean_button* button)
 {
     clean_label_destroy(button->title);
 
+    glDeleteProgram(button->shader_program);
+
     glDeleteVertexArrays(1, &button->vao);
 
     glDeleteBuffers(1, &button->body_vbo);
@@ -132,7 +156,7 @@ void clean_button_display(clean_button* button, float x, float y)
 {    
     glBindVertexArray(button->vao);
 
-    // TODO: glUseProgram(button->shader)
+    glUseProgram(button->shader_program);
 
     // === [RENDER BORDER] ===
 
